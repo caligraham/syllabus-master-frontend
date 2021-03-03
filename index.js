@@ -2,6 +2,8 @@ const endPoint = "http://localhost:3000/api/v1/syllabuses"
 
 document.addEventListener('DOMContentLoaded', () => {
    getSyllabi()
+    // fetch and load Syllabi 
+   
 
    const createSyllabusForm = document.querySelector("#create-syllabus-form")
 
@@ -15,7 +17,13 @@ function getSyllabi() {
     .then(syllabi => {
         syllabi.data.forEach(syllabus => {
             // double check how your data is nested in the console so you can successfully access the attributes of each individual object
-            const syllabusMarkup = `
+            render(syllabus)
+          })
+    })
+}
+
+function render(syllabus) {
+    const syllabusMarkup = `
               <div data-id=${syllabus.id}>
                 <img src=${syllabus.attributes.image_url} height="200" width="250">
                 <h3>${syllabus.attributes.title}</h3>
@@ -25,8 +33,6 @@ function getSyllabi() {
               <br><br>`;
     
               document.querySelector('#syllabus-container').innerHTML += syllabusMarkup
-          })
-    })
 }
 
 function createFormHandler(e) {
@@ -39,5 +45,23 @@ function createFormHandler(e) {
 }
 
 function postFetch(title, description, image_url, category_id) {
-    console.log(title, description, image_url, category_id);
+  // build my body object outside of my fetch
+  const bodyData = {title, description, image_url, category_id}
+
+  fetch(endPoint, {
+    // POST request
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify(bodyData)
+  })
+  .then(response => response.json())
+  .then(syllabus => {
+    console.log(syllabus);
+    const syllabusData = syllabus.data
+    // render JSON response
+    let newSyllabus = new Syllabus(syllabusData, syllabusData.attributes)
+    document.querySelector('#syllabus-container').innerHTML += newSyllabus.renderSyllabusCard()
+  })
+
 }
+ 
