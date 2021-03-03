@@ -15,7 +15,6 @@ function getSyllabi() {
     .then(syllabi => {
         syllabi.data.forEach(syllabus => {
             // double check how your data is nested in the console so you can successfully access the attributes of each individual object
-            
             let newSyllabus = new Syllabus(syllabus, syllabus.attributes)
             
             document.querySelector('#syllabus-container').innerHTML += newSyllabus.renderSyllabusCard()
